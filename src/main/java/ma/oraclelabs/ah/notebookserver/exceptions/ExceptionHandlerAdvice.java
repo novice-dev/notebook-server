@@ -15,28 +15,24 @@ import ma.oraclelabs.ah.notebookserver.models.InterpretationError;
 public class ExceptionHandlerAdvice {
     @ExceptionHandler(IOException.class)
     public ResponseEntity<InterpretationError> handleException(IOException e) {
-        String error = "Error reading/writing data";
-        log.error(error, e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new InterpretationError(error));
+        return handleExceptionError("Error reading/writing data", e);
     }
 
     @ExceptionHandler(InterruptedException.class)
     public ResponseEntity<InterpretationError> handleException(InterruptedException e) {
-        String error = "Process has been interrupted";
-        log.error(error, e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new InterpretationError(error));
+        return handleExceptionError("Process has been interrupted", e);
     }
 
     @ExceptionHandler({InterpreterNotFoundException.class, InterpreterTimeoutException.class})
     public ResponseEntity<InterpretationError> handleException(RuntimeException e) {
-        String error = e.getMessage();
+        return handleExceptionError(e.getMessage(), e);
+    }
+
+    private ResponseEntity<InterpretationError> handleExceptionError(String error, Exception e) {
         log.error(error, e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(new InterpretationError(error));
     }
-
 
     @ExceptionHandler(InterpreterRuntimeException.class)
     public ResponseEntity<InterpretationError> handleException(InterpreterRuntimeException e) {
