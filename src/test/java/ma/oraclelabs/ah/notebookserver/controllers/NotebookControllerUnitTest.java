@@ -32,14 +32,14 @@ public class NotebookControllerUnitTest {
 
     @Test
     public void shouldProceedSuccessfully() throws Exception {
-        when(executor.interprete(any(Request.class)))
-            .thenReturn(Response.builder().result("Hello OracleLabs").build());
-
         Request request = Request
             .builder()
             .interpreter("python")
             .instruction("print('Hello OracleLabs')")
             .build();
+
+        when(executor.interprete(request))
+            .thenReturn(Response.builder().result("Hello OracleLabs").build());
 
         mockMvc.perform(
             post("/execute")
